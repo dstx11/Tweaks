@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DSTX Tweaks Actions Catalog",
+  "type": "object",
+  "required": [
+    "items"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "pageId",
+          "name",
+          "short",
+          "description",
+          "risk",
+          "requiresRestart",
+          "action",
+          "commandPreview"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pageId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "short": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "risk": {
+            "enum": [
+              "SAFE",
+              "MEDIUM",
+              "DANGER",
+              "SECURITY"
+            ]
+          },
+          "requiresRestart": {
+            "type": "boolean"
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "commandPreview": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "detectAction": {
+            "type": "string"
+          },
+          "applyAction": {
+            "type": "string"
+          },
+          "undoAction": {
+            "type": "string"
+          },
+          "verifyAction": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

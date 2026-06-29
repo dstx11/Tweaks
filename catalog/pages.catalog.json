@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "group": "CORE",
+      "icon": "D",
+      "description": "System overview and recommended actions."
+    },
+    {
+      "id": "windows",
+      "name": "Windows",
+      "group": "CORE",
+      "icon": "W",
+      "description": "Minimal Windows, power, services and guarded security actions."
+    },
+    {
+      "id": "apps",
+      "name": "Apps",
+      "group": "CORE",
+      "icon": "A",
+      "description": "Install, clean and tune gaming-related apps."
+    },
+    {
+      "id": "network",
+      "name": "Network Lab",
+      "group": "PERFORMANCE",
+      "icon": "N",
+      "description": "Diagnostics first, tweaks second, router notes third."
+    },
+    {
+      "id": "games",
+      "name": "Game Profiles",
+      "group": "PERFORMANCE",
+      "icon": "G",
+      "description": "Per-game launch mode, profiles and protected VALORANT flow."
+    },
+    {
+      "id": "repair",
+      "name": "Repair Center",
+      "group": "SYSTEM",
+      "icon": "R",
+      "description": "Fixes, restore, undo and system repair actions."
+    },
+    {
+      "id": "reports",
+      "name": "Reports",
+      "group": "SYSTEM",
+      "icon": "L",
+      "description": "Logs, backups, exports and before/after reports."
+    },
+    {
+      "id": "settings",
+      "name": "Settings",
+      "group": "SYSTEM",
+      "icon": "S",
+      "description": "Guard rules, catalog paths and confirmation behavior."
+    }
+  ]
+}

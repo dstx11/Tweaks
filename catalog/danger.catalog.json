@@ -1,0 +1,26 @@
+{
+  "version": "0.8.3",
+  "guardedTags": [
+    "valorant-risk",
+    "guarded"
+  ],
+  "guardRules": [
+    {
+      "id": "valorant-security-stack",
+      "blocksTags": [
+        "valorant-risk"
+      ],
+      "unlessOverride": true,
+      "overridePhrase": "DSTX VANGUARD",
+      "reason": "Protects Riot/Vanguard-sensitive security settings from BCDEdit/VBS/HVCI changes."
+    }
+  ],
+  "manualOnly": [
+    "MSI mode mass enable",
+    "IRQ affinity automation",
+    "silent NVIDIA driver installation",
+    "DDU automation",
+    "BIOS changes",
+    "Defender/Firewall disable"
+  ]
+}

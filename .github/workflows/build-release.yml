@@ -1,0 +1,78 @@
+name: build-release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows setup.exe
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $paths = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $paths | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { throw "ISCC.exe not found after install." }
+          Write-Host "ISCC: $iscc"
+
+      - name: Validate PowerShell
+        shell: pwsh
+        run: ./scripts/ci/test-powershell.ps1
+
+      - name: Validate catalogs
+        shell: pwsh
+        run: ./scripts/ci/validate-catalogs.ps1
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore ./DSTX.Tweaks.App/DSTX.Tweaks.App.csproj
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build ./DSTX.Tweaks.App/DSTX.Tweaks.App.csproj -c Release --no-restore
+
+      - name: Publish and build setup.exe
+        shell: pwsh
+        env:
+          SIGNING_CERTIFICATE_BASE64: ${{ secrets.SIGNING_CERTIFICATE_BASE64 }}
+          SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+        run: ./scripts/ci/build-release.ps1
+
+      - name: Upload setup.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: DSTX-Tweaks-setup
+          path: |
+            installer-output/setup.exe
+            installer-output/setup.exe.sha256
+            installer-output/update.metadata.json
+          if-no-files-found: error
+
+      - name: Upload published app folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: DSTX-Tweaks-publish-win-x64
+          path: publish/win-x64/**
+          if-no-files-found: error

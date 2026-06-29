@@ -1,0 +1,147 @@
+{
+  "items": [
+    {
+      "id": "process_lasso",
+      "name": "Process Lasso",
+      "winget": "BitSum.ProcessLasso",
+      "processes": [
+        "ProcessLasso",
+        "ProcessGovernor"
+      ],
+      "startup": [
+        "Process Lasso"
+      ],
+      "cache": []
+    },
+    {
+      "id": "parkcontrol",
+      "name": "ParkControl",
+      "winget": "BitSum.ParkControl",
+      "processes": [
+        "ParkControl"
+      ],
+      "startup": [
+        "ParkControl"
+      ],
+      "cache": []
+    },
+    {
+      "id": "hwinfo",
+      "name": "HWiNFO",
+      "winget": "REALiX.HWiNFO",
+      "processes": [
+        "HWiNFO64",
+        "HWiNFO"
+      ],
+      "startup": [],
+      "cache": []
+    },
+    {
+      "id": "brave",
+      "name": "Brave",
+      "winget": "Brave.Brave",
+      "processes": [
+        "brave"
+      ],
+      "startup": [
+        "Brave",
+        "brave"
+      ],
+      "cache": [
+        "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Default\\Cache"
+      ]
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "winget": "Discord.Discord",
+      "processes": [
+        "Discord",
+        "Update"
+      ],
+      "startup": [
+        "Discord",
+        "Update.exe"
+      ],
+      "cache": [
+        "%APPDATA%\\discord\\Cache",
+        "%APPDATA%\\discord\\Code Cache",
+        "%APPDATA%\\discord\\GPUCache"
+      ]
+    },
+    {
+      "id": "steam",
+      "name": "Steam",
+      "winget": "Valve.Steam",
+      "processes": [
+        "steamwebhelper"
+      ],
+      "startup": [
+        "Steam",
+        "steam.exe"
+      ],
+      "cache": [
+        "%LOCALAPPDATA%\\Steam\\htmlcache"
+      ]
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "winget": "Spotify.Spotify",
+      "processes": [
+        "Spotify"
+      ],
+      "startup": [
+        "Spotify",
+        "spotify.exe"
+      ],
+      "cache": [
+        "%APPDATA%\\Spotify\\Cache"
+      ]
+    },
+    {
+      "id": "nvcleanstall",
+      "name": "NVCleanstall",
+      "winget": "TechPowerUp.NVCleanstall",
+      "processes": [
+        "NVCleanstall"
+      ],
+      "startup": [],
+      "cache": []
+    },
+    {
+      "id": "stremio",
+      "name": "Stremio",
+      "winget": "Stremio.Stremio",
+      "processes": [
+        "stremio",
+        "stremio-runtime",
+        "stremio-service"
+      ],
+      "startup": [
+        "Stremio",
+        "stremio"
+      ],
+      "cache": [
+        "%APPDATA%\\stremio\\Cache"
+      ]
+    },
+    {
+      "id": "prism",
+      "name": "Prism Launcher",
+      "winget": "PrismLauncher.PrismLauncher",
+      "processes": [
+        "prismlauncher",
+        "javaw",
+        "java"
+      ],
+      "startup": [
+        "Prism",
+        "prismlauncher"
+      ],
+      "cache": [
+        "%APPDATA%\\PrismLauncher\\logs"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Final installed executable name -->
+    <AssemblyName>dstx</AssemblyName>
+    <RootNamespace>DSTX.Tweaks.App</RootNamespace>
+
+    <Product>DSTX Tweaks</Product>
+    <Company>DSTX</Company>
+    <Version>0.8.3</Version>
+    <FileVersion>0.8.3.0</FileVersion>
+    <InformationalVersion>0.8.3</InformationalVersion>
+
+    <!-- App always asks for admin because the optimizer needs system-level changes -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\catalog\**\*.*" CopyToOutputDirectory="PreserveNewest" LinkBase="catalog" />
+    <None Include="..\scripts\**\*.*" CopyToOutputDirectory="PreserveNewest" LinkBase="scripts" />
+  </ItemGroup>
+
+</Project>

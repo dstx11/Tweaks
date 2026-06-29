@@ -1,0 +1,333 @@
+{
+  "items": [
+    {
+      "id": "self_test",
+      "pageId": "dashboard",
+      "name": "Dashboard Status Scan",
+      "short": "Scan Windows, power, VBS/HVCI, adapter and Vanguard.",
+      "description": "Runs a read-only diagnostic pass and fills the dashboard/log with system, app and network state.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "dashboard_status",
+      "commandPreview": "Get-CimInstance Win32_OperatingSystem\nGet-NetAdapter | Where Status -eq Up\nsc query vgc\nwinget --version",
+      "tags": [
+        "read-only"
+      ],
+      "isSelected": true,
+      "detectAction": "detect:dashboard_status",
+      "applyAction": "apply:dashboard_status",
+      "undoAction": "undo:dashboard_status",
+      "verifyAction": "verify:dashboard_status"
+    },
+    {
+      "id": "valorant_guard",
+      "pageId": "dashboard",
+      "name": "Valorant Guard",
+      "short": "Blocks Vanguard-breaking tweaks unless override is explicitly enabled.",
+      "description": "Protects Riot Client, Vanguard service, VALORANT processes and security stack from aggressive guarded actions.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "valorant_guard",
+      "commandPreview": "sc query vgc\nConfirm-SecureBootUEFI\nGet-Tpm\nGet-CimInstance Win32_DeviceGuard",
+      "tags": [
+        "guard"
+      ],
+      "isSelected": true,
+      "detectAction": "detect:valorant_guard",
+      "applyAction": "apply:valorant_guard",
+      "undoAction": "undo:valorant_guard",
+      "verifyAction": "verify:valorant_guard"
+    },
+    {
+      "id": "command_preview",
+      "pageId": "dashboard",
+      "name": "Command Preview",
+      "short": "Show exact commands before running actions.",
+      "description": "Copies/prints the PowerShell and command-line operations for the selected action.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "command_preview",
+      "commandPreview": "Write-Output $SelectedAction.CommandPreview",
+      "tags": [
+        "read-only"
+      ],
+      "detectAction": "detect:command_preview",
+      "applyAction": "apply:command_preview",
+      "undoAction": "undo:command_preview",
+      "verifyAction": "verify:command_preview"
+    },
+    {
+      "id": "gamer_mode",
+      "pageId": "windows",
+      "name": "Minimal Windows Gamer Mode",
+      "short": "Notifications off, GameDVR off, dark mode, mouse acceleration off, cleaner taskbar.",
+      "description": "Applies basic Windows gaming/minimalism changes with backup first.",
+      "risk": "SAFE",
+      "requiresRestart": true,
+      "action": "gamer_mode",
+      "commandPreview": "reg add HKCU\\System\\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f\nreg add HKCU\\Control Panel\\Mouse /v MouseSpeed /t REG_SZ /d 0 /f",
+      "tags": [
+        "backup"
+      ],
+      "isSelected": true,
+      "detectAction": "detect:gamer_mode",
+      "applyAction": "apply:gamer_mode",
+      "undoAction": "undo:gamer_mode",
+      "verifyAction": "verify:gamer_mode"
+    },
+    {
+      "id": "power_cpu",
+      "pageId": "windows",
+      "name": "Max Power / CPU",
+      "short": "Ultimate Performance, EPP 0, boost aggressive, PCIe and USB power saving off.",
+      "description": "Applies powercfg CPU and platform power changes for maximum performance.",
+      "risk": "MEDIUM",
+      "requiresRestart": true,
+      "action": "power_cpu",
+      "commandPreview": "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61\npowercfg /setactive SCHEME_CURRENT",
+      "tags": [
+        "backup"
+      ],
+      "isSelected": true,
+      "detectAction": "detect:power_cpu",
+      "applyAction": "apply:power_cpu",
+      "undoAction": "undo:power_cpu",
+      "verifyAction": "verify:power_cpu"
+    },
+    {
+      "id": "bcd_vbs",
+      "pageId": "windows",
+      "name": "BCDEdit / VBS Pack",
+      "short": "Guarded security pack; skipped by Valorant Guard unless override is enabled.",
+      "description": "Applies BCDEdit timer changes and disables hypervisor/VBS/HVCI only when explicitly allowed.",
+      "risk": "SECURITY",
+      "requiresRestart": true,
+      "action": "latency_bcd",
+      "commandPreview": "bcdedit /set disabledynamictick yes\nbcdedit /set hypervisorlaunchtype off\nreg add HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard /v EnableVirtualizationBasedSecurity /t REG_DWORD /d 0 /f",
+      "tags": [
+        "valorant-risk",
+        "guarded"
+      ],
+      "detectAction": "detect:latency_bcd",
+      "applyAction": "apply:latency_bcd",
+      "undoAction": "undo:latency_bcd",
+      "verifyAction": "verify:latency_bcd"
+    },
+    {
+      "id": "network_diag",
+      "pageId": "network",
+      "name": "Network Diagnostics",
+      "short": "Adapter state, TCP state, DNS, gateway ping and jitter sample.",
+      "description": "Exports a network diagnostic report before applying network tweaks.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "network_diagnostics",
+      "commandPreview": "ipconfig /all\nnetsh int tcp show global\nping 1.1.1.1 -n 20",
+      "tags": [
+        "read-only"
+      ],
+      "detectAction": "detect:network_diagnostics",
+      "applyAction": "apply:network_diagnostics",
+      "undoAction": "undo:network_diagnostics",
+      "verifyAction": "verify:network_diagnostics"
+    },
+    {
+      "id": "network_low_latency",
+      "pageId": "network",
+      "name": "Network Low Latency",
+      "short": "RSS on, RSC/LSO off, interrupt moderation off, NIC power saving off.",
+      "description": "Applies adapter/TCP changes commonly used for latency-focused Windows tuning.",
+      "risk": "MEDIUM",
+      "requiresRestart": true,
+      "action": "network_ping",
+      "commandPreview": "netsh int tcp set global rss=enabled\nDisable-NetAdapterRsc -Name <adapter>\nDisable-NetAdapterLso -Name <adapter>",
+      "tags": [
+        "backup"
+      ],
+      "detectAction": "detect:network_ping",
+      "applyAction": "apply:network_ping",
+      "undoAction": "undo:network_ping",
+      "verifyAction": "verify:network_ping"
+    },
+    {
+      "id": "install_apps",
+      "pageId": "apps",
+      "name": "Install App Bundle",
+      "short": "Install/update Brave, Discord, Steam, Spotify, NVCleanstall, Stremio and Prism.",
+      "description": "Uses winget show before winget install/upgrade for exact package IDs.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "install_apps",
+      "commandPreview": "winget show --id Discord.Discord -e\nwinget install -e --id Discord.Discord --accept-package-agreements --accept-source-agreements",
+      "tags": [
+        "winget"
+      ],
+      "detectAction": "detect:install_apps",
+      "applyAction": "apply:install_apps",
+      "undoAction": "undo:install_apps",
+      "verifyAction": "verify:install_apps"
+    },
+    {
+      "id": "opt_discord",
+      "pageId": "apps",
+      "name": "Optimize Discord",
+      "short": "Kill Discord/Update, clear cache, backup settings.json, edit startup/hardware if detected.",
+      "description": "Aggressively optimizes Discord while keeping a backup of settings.json.",
+      "risk": "DANGER",
+      "requiresRestart": false,
+      "action": "optimize_discord",
+      "commandPreview": "Stop-Process -Name Discord,Update -Force\nCopy-Item settings.json settings.json.bak_dstx\nRemove-Item Cache,Code Cache,GPUCache -Recurse -Force",
+      "tags": [
+        "backup"
+      ],
+      "detectAction": "detect:optimize_discord",
+      "applyAction": "apply:optimize_discord",
+      "undoAction": "undo:optimize_discord",
+      "verifyAction": "verify:optimize_discord"
+    },
+    {
+      "id": "opt_steam",
+      "pageId": "apps",
+      "name": "Optimize Steam",
+      "short": "Disable startup, clear htmlcache/httpcache, handle steamwebhelper safely.",
+      "description": "Cleans Steam web caches but does not kill Steam globally because Steam games can depend on it.",
+      "risk": "DANGER",
+      "requiresRestart": false,
+      "action": "optimize_steam",
+      "commandPreview": "Remove startup Run key\nRemove-Item Steam\\appcache\\httpcache -Recurse -Force\nStop-Process steamwebhelper -Force",
+      "tags": [
+        "backup"
+      ],
+      "detectAction": "detect:optimize_steam",
+      "applyAction": "apply:optimize_steam",
+      "undoAction": "undo:optimize_steam",
+      "verifyAction": "verify:optimize_steam"
+    },
+    {
+      "id": "opt_brave",
+      "pageId": "apps",
+      "name": "Optimize Brave",
+      "short": "Startup off, cache purge, GPUCache, ShaderCache and gaming shortcut.",
+      "description": "Cleans Brave browser caches and creates a separate gaming shortcut.",
+      "risk": "DANGER",
+      "requiresRestart": false,
+      "action": "optimize_brave",
+      "commandPreview": "Stop-Process brave -Force\nRemove-Item Brave Cache, Code Cache, GPUCache, ShaderCache\nCreate Brave Gaming.lnk",
+      "tags": [
+        "backup"
+      ],
+      "detectAction": "detect:optimize_brave",
+      "applyAction": "apply:optimize_brave",
+      "undoAction": "undo:optimize_brave",
+      "verifyAction": "verify:optimize_brave"
+    },
+    {
+      "id": "valorant_profile",
+      "pageId": "games",
+      "name": "VALORANT Profile",
+      "short": "Never kill Riot, protect vgc, remove admin compatibility flags if needed.",
+      "description": "A protected per-game profile for VALORANT and Vanguard-sensitive systems.",
+      "risk": "SAFE",
+      "requiresRestart": true,
+      "action": "fix_valorant",
+      "commandPreview": "reg delete AppCompatFlags\\Layers /v <valorant.exe> /f\nsc config vgc start= demand\nnet start vgc",
+      "tags": [
+        "guard"
+      ],
+      "detectAction": "detect:fix_valorant",
+      "applyAction": "apply:fix_valorant",
+      "undoAction": "undo:fix_valorant",
+      "verifyAction": "verify:fix_valorant"
+    },
+    {
+      "id": "add_game_exe",
+      "pageId": "games",
+      "name": "Add Custom EXE Profile",
+      "short": "Choose game executable, add to priority watcher, set fullscreen flags.",
+      "description": "Creates a per-game profile entry and adds its process name to ImportantApps.",
+      "risk": "MEDIUM",
+      "requiresRestart": false,
+      "action": "per_game_profile",
+      "commandPreview": "OpenFileDialog *.exe\nAdd process to ImportantApps.txt\nSet AppCompatFlags if selected",
+      "tags": [
+        "profile"
+      ],
+      "detectAction": "detect:per_game_profile",
+      "applyAction": "apply:per_game_profile",
+      "undoAction": "undo:per_game_profile",
+      "verifyAction": "verify:per_game_profile"
+    },
+    {
+      "id": "fix_bluetooth",
+      "pageId": "repair",
+      "name": "Fix Bluetooth",
+      "short": "Restore Bluetooth services and scan devices.",
+      "description": "Repair helper for Bluetooth issues after aggressive debloat or driver instability.",
+      "risk": "SAFE",
+      "requiresRestart": true,
+      "action": "fix_bluetooth",
+      "commandPreview": "sc config bthserv start= demand\nnet start bthserv\npnputil /scan-devices",
+      "tags": [
+        "repair"
+      ],
+      "detectAction": "detect:fix_bluetooth",
+      "applyAction": "apply:fix_bluetooth",
+      "undoAction": "undo:fix_bluetooth",
+      "verifyAction": "verify:fix_bluetooth"
+    },
+    {
+      "id": "repair_windows",
+      "pageId": "repair",
+      "name": "DISM + SFC Repair",
+      "short": "Windows image and system file repair flow.",
+      "description": "Runs DISM RestoreHealth and SFC scannow.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "repair_windows",
+      "commandPreview": "DISM /Online /Cleanup-Image /RestoreHealth\nsfc /scannow",
+      "tags": [
+        "repair"
+      ],
+      "detectAction": "detect:repair_windows",
+      "applyAction": "apply:repair_windows",
+      "undoAction": "undo:repair_windows",
+      "verifyAction": "verify:repair_windows"
+    },
+    {
+      "id": "export_report",
+      "pageId": "reports",
+      "name": "Export Report ZIP",
+      "short": "Power plan, TCP state, apps, processes, services and current log.",
+      "description": "Creates a support/diagnostic bundle in ProgramData.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "export_report",
+      "commandPreview": "powercfg /getactivescheme\nnetsh int tcp show global\ntasklist /v\nCompress-Archive",
+      "tags": [
+        "report"
+      ],
+      "detectAction": "detect:export_report",
+      "applyAction": "apply:export_report",
+      "undoAction": "undo:export_report",
+      "verifyAction": "verify:export_report"
+    },
+    {
+      "id": "settings_guard",
+      "pageId": "settings",
+      "name": "Guard Rules",
+      "short": "Configure what Valorant Guard blocks and what requires override.",
+      "description": "Shows guarded actions and controls confirmation behavior.",
+      "risk": "SAFE",
+      "requiresRestart": false,
+      "action": "valorant_guard",
+      "commandPreview": "Show danger.catalog.json\nShow guarded actions",
+      "tags": [
+        "settings"
+      ],
+      "detectAction": "detect:valorant_guard",
+      "applyAction": "apply:valorant_guard",
+      "undoAction": "undo:valorant_guard",
+      "verifyAction": "verify:valorant_guard"
+    }
+  ]
+}
