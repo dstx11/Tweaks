@@ -76,11 +76,27 @@ if (-not $SkipInstaller) {
 
     $metadata = Get-Content (Join-Path $Root "catalog\update.metadata.json") -Raw | ConvertFrom-Json
     $metadata.sha256 = $hash
-    $metadata.generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    if ($metadata.PSObject.Properties.Name -contains "generatedAtUtc") {
+        $metadata.generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    } else {
+        $metadata | Add-Member -NotePropertyName "generatedAtUtc" -NotePropertyValue ((Get-Date).ToUniversalTime().ToString("o"))
+    }
     $metadata | ConvertTo-Json -Depth 20 | Set-Content $MetadataPath -Encoding UTF8
 
     Write-Host "setup.exe: $SetupExe" -ForegroundColor Green
     Write-Host "sha256: $hash" -ForegroundColor Green
+}
+
+
+if ($env:GITHUB_HEAD_REF -eq "dap-port-26.3-ci" -or $env:GITHUB_REF_NAME -eq "dap-port-26.3-ci") {
+    Step "Collect DAP ur Homies Minecraft 26.3 port attempt"
+    $DapOutput = Join-Path $PublishDir "DAP-Port-26.3"
+    $DapEarly = Join-Path $Root "dap-port-early"
+    if (Test-Path $DapEarly) {
+        Copy-Item $DapEarly $DapOutput -Recurse -Force
+    } else {
+        & (Join-Path $Root "scripts\ci\dap-port-ci.ps1") -OutputDir $DapOutput
+    }
 }
 
 Step "Build release completed"
