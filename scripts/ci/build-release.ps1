@@ -83,4 +83,11 @@ if (-not $SkipInstaller) {
     Write-Host "sha256: $hash" -ForegroundColor Green
 }
 
+
+if ($env:GITHUB_HEAD_REF -eq "dap-port-26.3-ci" -or $env:GITHUB_REF_NAME -eq "dap-port-26.3-ci") {
+    Step "DAP ur Homies Minecraft 26.3 port attempt"
+    $DapOutput = Join-Path $PublishDir "DAP-Port-26.3"
+    & (Join-Path $Root "scripts\ci\dap-port-ci.ps1") -OutputDir $DapOutput
+}
+
 Step "Build release completed"
