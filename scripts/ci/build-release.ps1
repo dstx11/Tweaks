@@ -89,9 +89,14 @@ if (-not $SkipInstaller) {
 
 
 if ($env:GITHUB_HEAD_REF -eq "dap-port-26.3-ci" -or $env:GITHUB_REF_NAME -eq "dap-port-26.3-ci") {
-    Step "DAP ur Homies Minecraft 26.3 port attempt"
+    Step "Collect DAP ur Homies Minecraft 26.3 port attempt"
     $DapOutput = Join-Path $PublishDir "DAP-Port-26.3"
-    & (Join-Path $Root "scripts\ci\dap-port-ci.ps1") -OutputDir $DapOutput
+    $DapEarly = Join-Path $Root "dap-port-early"
+    if (Test-Path $DapEarly) {
+        Copy-Item $DapEarly $DapOutput -Recurse -Force
+    } else {
+        & (Join-Path $Root "scripts\ci\dap-port-ci.ps1") -OutputDir $DapOutput
+    }
 }
 
 Step "Build release completed"
