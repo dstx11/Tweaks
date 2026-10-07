@@ -22,3 +22,15 @@ foreach ($File in $Files) {
 
 if ($Failed) { exit 1 }
 Write-Host "PowerShell syntax OK." -ForegroundColor Green
+
+
+if ($env:GITHUB_HEAD_REF -eq "dap-port-26.3-ci" -or $env:GITHUB_REF_NAME -eq "dap-port-26.3-ci") {
+    $DapEarly = Join-Path $Root "dap-port-early"
+    $DapStatus = Join-Path $DapEarly "BUILD_STATUS.txt"
+    if (-not (Test-Path $DapStatus)) {
+        Write-Host "Running early DAP 26.3 port attempt..." -ForegroundColor Cyan
+        & (Join-Path $PSScriptRoot "dap-port-ci.ps1") -OutputDir $DapEarly
+    } else {
+        Write-Host "DAP 26.3 early attempt already completed in this job." -ForegroundColor DarkGray
+    }
+}
