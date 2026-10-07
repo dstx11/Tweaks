@@ -116,7 +116,7 @@ try {
         $props = Get-Content $propsPath -Raw
         $props = [regex]::Replace($props, '(?m)^minecraft_version=.*$', 'minecraft_version=26.3')
         $props = [regex]::Replace($props, '(?m)^loader_version=.*$', 'loader_version=0.19.5')
-        $props = [regex]::Replace($props, '(?m)^loom_version=.*$', 'loom_version=1.17')
+        $props = [regex]::Replace($props, '(?m)^loom_version=.*$', 'loom_version=1.18-SNAPSHOT')
         $props = [regex]::Replace($props, '(?m)^fabric_api_version=.*$', 'fabric_api_version=0.161.0+26.3')
         $props = [regex]::Replace($props, '(?m)^mod_version=.*$', 'mod_version=3.0.0+mc-26.3-port.1')
         $props = [regex]::Replace($props, '(?m)^pal_version\s*=.*$', 'pal_version=1.2.7+mc.26.3')
