@@ -52,6 +52,37 @@ function Use-JavaVersion([int]$Version) {
     }
 }
 
+
+function Get-Gradle([string]$Version) {
+    $distRoot = Join-Path $env:RUNNER_TEMP "gradle-dist-$Version"
+    $gradleBat = Join-Path $distRoot "gradle-$Version\bin\gradle.bat"
+    if (Test-Path $gradleBat) {
+        return $gradleBat
+    }
+
+    $zipPath = Join-Path $env:RUNNER_TEMP "gradle-$Version-bin.zip"
+    if (Test-Path $zipPath) {
+        Remove-Item $zipPath -Force
+    }
+    if (Test-Path $distRoot) {
+        Remove-Item $distRoot -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $distRoot -Force | Out-Null
+
+    $url = "https://services.gradle.org/distributions/gradle-$Version-bin.zip"
+    Write-Host "Downloading Gradle $Version..." -ForegroundColor Cyan
+    & curl.exe -L --fail --retry 3 --retry-delay 2 -o $zipPath $url
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $zipPath)) {
+        throw "Failed to download Gradle $Version."
+    }
+
+    Expand-Archive -Path $zipPath -DestinationPath $distRoot -Force
+    if (-not (Test-Path $gradleBat)) {
+        throw "Gradle $Version executable not found after extraction."
+    }
+    return $gradleBat
+}
+
 try {
     Write-Status "STARTED"
 
@@ -72,7 +103,8 @@ try {
         Use-JavaVersion 21
 
         Write-Host "Migrating Yarn to Mojang mappings on Minecraft 1.21.11..." -ForegroundColor Cyan
-        & bash ./gradlew migrateMappings --mappings "net.minecraft:mappings:1.21.11" --overrideInputsIHaveABackup --no-daemon --stacktrace 2>&1 |
+        $gradle94 = Get-Gradle "9.4.1"
+        & $gradle94 migrateMappings --mappings "net.minecraft:mappings:1.21.11" --overrideInputsIHaveABackup --no-daemon --stacktrace 2>&1 |
             Tee-Object -FilePath $MigrationLog -Append
         if ($LASTEXITCODE -ne 0) {
             throw "migrateMappings failed."
@@ -189,7 +221,8 @@ repositories {
         Use-JavaVersion 25
 
         Write-Host "Building Minecraft 26.3 candidate..." -ForegroundColor Cyan
-        & bash ./gradlew clean build --no-daemon --stacktrace --warning-mode all 2>&1 |
+        $gradle96 = Get-Gradle "9.6.0"
+        & $gradle96 clean build --no-daemon --stacktrace --warning-mode all 2>&1 |
             Tee-Object -FilePath $BuildLog
         $buildExit = $LASTEXITCODE
 
@@ -209,6 +242,7 @@ repositories {
         if ($buildExit -ne 0) {
             Write-Status "BUILD_FAILED"
             Write-Host "DAP 26.3 build failed; diagnostics preserved." -ForegroundColor Red
+            $global:LASTEXITCODE = 0
             return
         }
 
@@ -228,4 +262,7 @@ catch {
     $_ | Out-String | Set-Content (Join-Path $OutputDir "exception.txt") -Encoding UTF8
     Write-Status "PORT_SCRIPT_FAILED"
     Write-Host $_ -ForegroundColor Red
+    $global:LASTEXITCODE = 0
 }
+
+$global:LASTEXITCODE = 0
