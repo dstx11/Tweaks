@@ -72,7 +72,7 @@ try {
         Use-JavaVersion 21
 
         Write-Host "Migrating Yarn to Mojang mappings on Minecraft 1.21.11..." -ForegroundColor Cyan
-        & .\gradlew.bat migrateMappings --mappings "net.minecraft:mappings:1.21.11" --overrideInputsIHaveABackup --no-daemon --stacktrace 2>&1 |
+        & bash ./gradlew migrateMappings --mappings "net.minecraft:mappings:1.21.11" --overrideInputsIHaveABackup --no-daemon --stacktrace 2>&1 |
             Tee-Object -FilePath $MigrationLog -Append
         if ($LASTEXITCODE -ne 0) {
             throw "migrateMappings failed."
@@ -189,7 +189,7 @@ repositories {
         Use-JavaVersion 25
 
         Write-Host "Building Minecraft 26.3 candidate..." -ForegroundColor Cyan
-        & .\gradlew.bat clean build --no-daemon --stacktrace --warning-mode all 2>&1 |
+        & bash ./gradlew clean build --no-daemon --stacktrace --warning-mode all 2>&1 |
             Tee-Object -FilePath $BuildLog
         $buildExit = $LASTEXITCODE
 
