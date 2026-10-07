@@ -22,9 +22,9 @@ function Write-Status([string]$Text) {
 
 function Use-JavaVersion([int]$Version) {
     $envName = "JAVA_HOME_$Version" + "_X64"
-    $home = [Environment]::GetEnvironmentVariable($envName)
+    $javaHome = [Environment]::GetEnvironmentVariable($envName)
 
-    if (-not $home -or -not (Test-Path (Join-Path $home "bin\java.exe"))) {
+    if (-not $javaHome -or -not (Test-Path (Join-Path $javaHome "bin\java.exe"))) {
         Write-Host "Java $Version not preinstalled; installing Temurin..." -ForegroundColor Yellow
         choco install "temurin$Version" --no-progress -y
         if ($LASTEXITCODE -ne 0) {
@@ -39,13 +39,13 @@ function Use-JavaVersion([int]$Version) {
         if (-not $candidate) {
             throw "Could not locate JDK $Version."
         }
-        $home = $candidate.FullName
+        $javaHome = $candidate.FullName
     }
 
-    $env:JAVA_HOME = $home
+    $env:JAVA_HOME = $javaHome
     $filtered = $env:Path -split ';' | Where-Object { $_ -and $_ -notmatch '\\Java\\|\\jdk-' }
-    $env:Path = "$home\bin;" + ($filtered -join ';')
-    Write-Host "Using JAVA_HOME=$home" -ForegroundColor Cyan
+    $env:Path = "$javaHome\bin;" + ($filtered -join ';')
+    Write-Host "Using JAVA_HOME=$javaHome" -ForegroundColor Cyan
     & java -version
     if ($LASTEXITCODE -ne 0) {
         throw "Java $Version failed to start."
