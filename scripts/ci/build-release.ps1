@@ -76,7 +76,11 @@ if (-not $SkipInstaller) {
 
     $metadata = Get-Content (Join-Path $Root "catalog\update.metadata.json") -Raw | ConvertFrom-Json
     $metadata.sha256 = $hash
-    $metadata.generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    if ($metadata.PSObject.Properties.Name -contains "generatedAtUtc") {
+        $metadata.generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    } else {
+        $metadata | Add-Member -NotePropertyName "generatedAtUtc" -NotePropertyValue ((Get-Date).ToUniversalTime().ToString("o"))
+    }
     $metadata | ConvertTo-Json -Depth 20 | Set-Content $MetadataPath -Encoding UTF8
 
     Write-Host "setup.exe: $SetupExe" -ForegroundColor Green
